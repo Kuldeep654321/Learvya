@@ -25,8 +25,11 @@ export class AuthGuard implements CanActivate {
     if (error || !data.user) throw new UnauthorizedException();
 
     // Controllers can use req.user.id for ownership checks.
+    // The raw token is kept request-scoped so Supabase queries can run
+    // under the same authenticated context and therefore remain RLS-aware.
     // Database RLS remains the final protection for user-owned data.
     req.user = data.user;
+    req.accessToken = token;
     return true;
   }
 }
