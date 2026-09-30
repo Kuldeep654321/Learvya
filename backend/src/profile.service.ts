@@ -1,20 +1,21 @@
 import { Injectable } from '@nestjs/common';
+import { ProfileRepository } from './profile.repository';
 
 @Injectable()
 export class ProfileService {
-  // Database access will be connected here through Supabase/PostgreSQL.
-  // Keeping persistence logic outside controllers keeps API boundaries clean.
-  async getProfile(userId: string) {
-    return {
-      userId,
-      profile: null,
-    };
+  constructor(private readonly repository: ProfileRepository) {}
+
+  // Business logic stays here; controllers remain focused on HTTP concerns.
+  async getProfile(userId: string, accessToken: string) {
+    return this.repository.findByUserId(userId, accessToken);
   }
 
-  async updateProfile(userId: string, payload: Record<string, unknown>) {
-    return {
-      userId,
-      profile: payload,
-    };
+  async updateProfile(
+    userId: string,
+    accessToken: string,
+    payload: Record<string, unknown>,
+  ) {
+    // Identity comes from the validated token, never from the request body.
+    return this.repository.update(userId, accessToken, payload);
   }
 }
