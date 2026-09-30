@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Put, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
+import { UpdateProfileDto } from './profile.dto';
 import { ProfileService } from './profile.service';
 
 @Controller('profile')
@@ -14,7 +15,7 @@ export class ProfileController {
   }
 
   @Put()
-  update(@Req() req: any, @Body() body: Record<string, unknown>) {
+  update(@Req() req: any, @Body() body: UpdateProfileDto) {
     // User ownership comes from auth identity, not request payload.
     return this.profileService.updateProfile(req.user.id, req.accessToken, body);
   }
